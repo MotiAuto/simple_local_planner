@@ -62,9 +62,9 @@ namespace simple_local_planner
             else
             {
                 geometry_msgs::msg::Twist cmd;
-                cmd.linear.x = x_vec;
-                cmd.linear.y = y_vec;
-                cmd.angular.z = rotation_vec;
+                cmd.linear.x = x_vec * 0.001;
+                cmd.linear.y = y_vec * 0.001;
+                cmd.angular.z = rotation_vec * 0.001;
 
                 cmd_pub->publish(cmd);
             }
