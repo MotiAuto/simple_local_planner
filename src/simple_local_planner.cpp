@@ -10,8 +10,6 @@ namespace simple_local_planner
             std::bind(&SimpleLocalPlanner::topic_callback, this, _1)
         );
 
-        timer_ = this->create_wall_timer(1ms, std::bind(&SimpleLocalPlanner::timer_callback, this));
-
         cmd_pub = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 0);
 
         tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
@@ -21,12 +19,6 @@ namespace simple_local_planner
     }
 
     void SimpleLocalPlanner::topic_callback(const nav_msgs::msg::Path::SharedPtr msg)
-    {
-        path_ = msg;
-        path_pose_id_ = 0;
-    }
-
-    void SimpleLocalPlanner::timer_callback()
     {
         if(path_ == nullptr || path_->poses.empty())
         {
@@ -38,7 +30,7 @@ namespace simple_local_planner
         {
             geometry_msgs::msg::TransformStamped t = tf_buffer_->lookupTransform("odom", "map", tf2::TimePointZero);
 
-            geometry_msgs::msg::PoseStamped target_pose = path_->poses[path_pose_id_];
+            geometry_msgs::msg::PoseStamped target_pose = path_->poses.front();
 
             tf2::Vector3 cu_pos, tar_pos;
             cu_pos.setW(t.transform.rotation.w);
@@ -55,25 +47,17 @@ namespace simple_local_planner
             auto delta_degree = tar_pos.getZ() - cu_pos.getZ();
             auto rotation_vec = delta_degree * (M_PI / 180.0);
 
-            if(x_vec < 0.05 && y_vec < 0.05 && rotation_vec < 0.05)
-            {
-                path_pose_id_ += 1;
-            }
-            else
-            {
-                geometry_msgs::msg::Twist cmd;
-                cmd.linear.x = x_vec * 0.001;
-                cmd.linear.y = y_vec * 0.001;
-                cmd.angular.z = rotation_vec * 0.001;
+            geometry_msgs::msg::Twist cmd;
+            cmd.linear.x = x_vec * 0.001;
+            cmd.linear.y = y_vec * 0.001;
+            cmd.angular.z = rotation_vec * 0.001;
 
-                cmd_pub->publish(cmd);
-            }
+            cmd_pub->publish(cmd);
         }
         catch(const tf2::TransformException &ex)
         {
             RCLCPP_ERROR(this->get_logger(), "Failed to transform : %s", ex.what());
         }
-        
     }
 }
 

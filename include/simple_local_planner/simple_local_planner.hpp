@@ -22,14 +22,12 @@ namespace simple_local_planner
         explicit SimpleLocalPlanner(const rclcpp::NodeOptions&option = rclcpp::NodeOptions());
 
         void topic_callback(const nav_msgs::msg::Path::SharedPtr msg);
-        void timer_callback();
 
         private:
         rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub;
         nav_msgs::msg::Path::SharedPtr path_;
         uint8_t path_pose_id_;
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub;
-        rclcpp::TimerBase::SharedPtr timer_;
         std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
         std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
     };
