@@ -25,7 +25,7 @@ namespace simple_local_planner
     {
         path_ = msg;
 
-        if(t != nullptr)
+        if(t != nullptr && !path_->poses.empty())
         {
             geometry_msgs::msg::PoseStamped target_pose = path_->poses.front();
 
@@ -47,9 +47,9 @@ namespace simple_local_planner
             auto rotation_vec = delta_degree * (M_PI / 180.0);
 
             geometry_msgs::msg::Twist cmd;
-            cmd.linear.x = x_vec;
-            cmd.linear.y = y_vec;
-            cmd.angular.z = rotation_vec;
+            cmd.linear.x = x_vec * 5;
+            cmd.linear.y = y_vec * 5;
+            cmd.angular.z = rotation_vec * 10;
 
             cmd_pub->publish(cmd);
         }
