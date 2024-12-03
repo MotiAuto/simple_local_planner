@@ -39,6 +39,8 @@ namespace simple_local_planner
             tar_pos.setY(target_pose.pose.orientation.y);
             tar_pos.setZ(target_pose.pose.orientation.z);
 
+            RCLCPP_INFO(this->get_logger(), "current:%.1lf, target:%.1lf", t->pose.position.x, target_pose.pose.position.x);
+
             auto x_vec = target_pose.pose.position.x - t->pose.position.x;
             auto y_vec = target_pose.pose.position.y - t->pose.position.y;
             auto delta_degree = tar_pos.getZ() - cu_pos.getZ();
