@@ -20,11 +20,7 @@ namespace simple_local_planner
 
     void SimpleLocalPlanner::topic_callback(const nav_msgs::msg::Path::SharedPtr msg)
     {
-        if(path_ == nullptr || path_->poses.empty())
-        {
-            RCLCPP_WARN(this->get_logger(), "Failed path!!");
-            return;
-        }
+        path_ = msg;
 
         try
         {
