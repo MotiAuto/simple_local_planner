@@ -24,7 +24,7 @@ namespace simple_local_planner
 
         try
         {
-            geometry_msgs::msg::TransformStamped t = tf_buffer_->lookupTransform("odom", "map", tf2::TimePointZero);
+            geometry_msgs::msg::TransformStamped t = tf_buffer_->lookupTransform("map", "odom", tf2::TimePointZero);
 
             geometry_msgs::msg::PoseStamped target_pose = path_->poses.front();
 
@@ -44,9 +44,9 @@ namespace simple_local_planner
             auto rotation_vec = delta_degree * (M_PI / 180.0);
 
             geometry_msgs::msg::Twist cmd;
-            cmd.linear.x = x_vec * 0.001;
-            cmd.linear.y = y_vec * 0.001;
-            cmd.angular.z = rotation_vec * 0.001;
+            cmd.linear.x = x_vec;
+            cmd.linear.y = y_vec;
+            cmd.angular.z = rotation_vec;
 
             cmd_pub->publish(cmd);
         }
